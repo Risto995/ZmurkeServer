@@ -18,8 +18,13 @@ class CreateGamesTable extends Migration
             $table->integer('number_of_players');
             $table->time('time_limit');
             $table->integer('starting_point')->unsigned();
+            $table->integer('created_by')->unsigned();
             $table->timestamps();
-            $table->foreign('starting_point')->references('id')->on('locations')->onDelete('set null')->onUpdate('cascade');
+        });
+
+        Schema::table('users', function($table) {
+            $table->foreign('current_location')->references('id')->on('locations')->onDelete('set null')->onUpdate('cascade');
+            $table->foreign('current_game')->references('id')->on('games')->onDelete('set null')->onUpdate('cascade');
         });
     }
 

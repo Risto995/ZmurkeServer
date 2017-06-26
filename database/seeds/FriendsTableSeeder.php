@@ -12,7 +12,7 @@ class FriendsTableSeeder extends Seeder
     public function run()
     {
         for($i = 1; $i<=50; $i++) {
-            for ($j = 1; $j <= $i; $j++) {
+            for ($j = 1; $j < $i; $j++) {
                 DB::table('friends')->insert([
                     'first_user' => $i,
                     'second_user' => $j
