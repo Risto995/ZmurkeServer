@@ -14,10 +14,29 @@ use App\User;
 use App\Game;
 use App\Location;
 use Symfony\Component\Routing\Exception\MissingMandatoryParametersException;
-
+use Auth;
 
 class UsersController extends Controller
 {
+
+    public static function login(Request $request){
+        if (Auth::attempt(['email' => $request->get('email'), 'password' => $request->get('password')])) {
+            // Authentication passed...
+            $user = Auth::user();
+            return $user['api_token'];
+        }
+    }
+
+    public static function register(Request $request){
+
+        return User::create([
+            'name' => $request->get('name'),
+            'email' => $request->get('email'),
+            'api_token' => str_random(60),
+            'password' => bcrypt($request->get('password')),
+        ]);
+    }
+
     public static function getAllUsers(Request $request){
         return User::all();
     }

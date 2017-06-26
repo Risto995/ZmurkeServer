@@ -18,6 +18,7 @@ class UsersTableSeeder extends Seeder
                 'name' => $faker->firstName,
                 'email' => $faker->freeEmail,
                 'date_of_birth' => $faker->dateTimeThisCentury->format('Y-m-d'),
+                'api_token' => str_random(60),
                 'avatar' => $faker->imageUrl(100, 100, 'cats'),
                 'password' => $faker->password,
                 'points' => 0,

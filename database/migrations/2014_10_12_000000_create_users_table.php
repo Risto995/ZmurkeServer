@@ -18,11 +18,12 @@ class CreateUsersTable extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('password');
-            $table->date('date_of_birth');
+            $table->date('date_of_birth')->nullable();
+            $table->string('api_token', 60)->unique();
             $table->string('avatar')->default('default.jpg');
             $table->integer('current_location')->unsigned()->nullable();
             $table->integer('current_game')->unsigned()->nullable();
-            $table->integer('points');
+            $table->integer('points')->default(0);
             $table->rememberToken();
             $table->timestamps();
         });

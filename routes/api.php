@@ -19,6 +19,14 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:api');
 
+Route::post('/login', function (Request $request) {
+    return UsersController::login($request);
+});
+
+Route::post('/register', function (Request $request) {
+    return UsersController::register($request);
+});
+
 Route::get('/users', function(Request $request){
     return UsersController::getAllUsers($request);
 });
@@ -29,24 +37,24 @@ Route::get('/users/{id}', function (Request $request, $id) {
 
 Route::get('/users/{id}/friends', function (Request $request, $id) {
     return UsersController::getUsersFriends($request, $id);
-});
+})->middleware('auth:api');
 
 Route::get('/users/{id}/location', function (Request $request, $id) {
     return UsersController::getCurrentLocation($request, $id);
-});
+})->middleware('auth:api');
 
 Route::get('/users/{id}/locations', function (Request $request, $id) {
     return UsersController::getLocations($request, $id);
-});
+})->middleware('auth:api');
 
 Route::get('/users/{id}/game', function (Request $request, $id) {
     return UsersController::getCurrentGame($request, $id);
-});
+})->middleware('auth:api');
 
 Route::get('/users/{id}/players', function (Request $request, $id) {
     return UsersController::getPlayersInCurrentGame($request, $id);
-});
+})->middleware('auth:api');
 
 Route::post('/users/{id}/location', function (Request $request, $id){
     return UsersController::postCurrentLocation($request, $id);
-});
+})->middleware('auth:api');
