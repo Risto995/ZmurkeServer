@@ -23,7 +23,11 @@ class CreateUsersTable extends Migration
             $table->string('avatar')->default('default.jpg');
             $table->integer('current_location')->unsigned()->nullable();
             $table->integer('current_game')->unsigned()->nullable();
+            $table->integer('safe_zone')->unsigned()->nullable();
+            $table->boolean('in_safe_zone')->default(false);
+            $table->boolean('hunter')->default(false);
             $table->integer('points')->default(0);
+            $table->integer('timer')->default(0);
             $table->rememberToken();
             $table->timestamps();
         });

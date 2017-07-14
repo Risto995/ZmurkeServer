@@ -15,7 +15,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'date_of_birth', 'api_token', 'avatar', 'points,', 'current_location', 'current_game'
+        'name', 'email', 'password', 'date_of_birth', 'api_token', 'avatar', 'points', 'current_location', 'current_game'
     ];
 
     /**
@@ -55,5 +55,13 @@ class User extends Authenticatable
     public function game()
     {
         return $this->belongsTo('App\Game', 'current_game');
+    }
+
+    /**
+     * Get the safe zone for this user
+     *  */
+    public function safeZone()
+    {
+        return $this->belongsTo('App\SafeZone', 'safe_zone');
     }
 }

@@ -19,6 +19,7 @@ class CreateGamesTable extends Migration
             $table->time('time_limit');
             $table->integer('starting_point')->unsigned();
             $table->integer('created_by')->unsigned();
+            $table->integer('winner')->unsigned()->nullable();
             $table->timestamps();
         });
 

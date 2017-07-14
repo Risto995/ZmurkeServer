@@ -3,7 +3,10 @@
 use Illuminate\Http\Request;
 
 use App\Http\Controllers\UsersController;
-
+use App\Http\Controllers\LocationController;
+use App\Http\Controllers\GameController;
+use App\Http\Controllers\SafeZoneController;
+use App\Http\Controllers\FriendsController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -15,10 +18,6 @@ use App\Http\Controllers\UsersController;
 |
 */
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:api');
-
 Route::post('/login', function (Request $request) {
     return UsersController::login($request);
 });
@@ -27,34 +26,70 @@ Route::post('/register', function (Request $request) {
     return UsersController::register($request);
 });
 
+Route::post('/update', function (Request $request) {
+    return UsersController::update($request);
+});
+
 Route::get('/users', function(Request $request){
     return UsersController::getAllUsers($request);
 });
 
-Route::get('/users/{id}', function (Request $request, $id) {
-    return UsersController::getUser($request, $id);
+Route::get('/user', function (Request $request) {
+    return UsersController::getUser($request);
 });
 
-Route::get('/users/{id}/friends', function (Request $request, $id) {
-    return UsersController::getUsersFriends($request, $id);
-})->middleware('auth:api');
+Route::get('/user/friends', function (Request $request) {
+    return FriendsController::getUsersFriends($request);
+});
 
-Route::get('/users/{id}/location', function (Request $request, $id) {
-    return UsersController::getCurrentLocation($request, $id);
-})->middleware('auth:api');
+Route::post('/user/friends', function (Request $request) {
+    return FriendsController::addFriend($request);
+});
 
-Route::get('/users/{id}/locations', function (Request $request, $id) {
-    return UsersController::getLocations($request, $id);
-})->middleware('auth:api');
+Route::get('/user/friends_within_radius', function (Request $request) {
+    return FriendsController::getAllFriendsWithinRadius($request, 30);
+});
 
-Route::get('/users/{id}/game', function (Request $request, $id) {
-    return UsersController::getCurrentGame($request, $id);
-})->middleware('auth:api');
+Route::get('/user/{id}/location', function (Request $request, $id) {
+    return LocationController::getCurrentLocation($request, $id);
+});
 
-Route::get('/users/{id}/players', function (Request $request, $id) {
-    return UsersController::getPlayersInCurrentGame($request, $id);
-})->middleware('auth:api');
+Route::get('/user/{id}/locations', function (Request $request, $id) {
+    return LocationController::getLocations($request, $id);
+});
 
-Route::post('/users/{id}/location', function (Request $request, $id){
-    return UsersController::postCurrentLocation($request, $id);
-})->middleware('auth:api');
+Route::post('/location', function (Request $request){
+    return LocationController::postCurrentLocation($request);
+});
+
+Route::get('/game', function (Request $request) {
+    return GameController::getCurrentGame($request);
+});
+
+Route::get('/players', function (Request $request) {
+    return GameController::getPlayersInCurrentGame($request);
+});
+
+Route::post('/game', function (Request $request){
+    return GameController::createNewGame($request);
+});
+
+Route::get('/game/end', function (Request $request) {
+    return GameController::endGame($request);
+});
+
+Route::get('/winner', function (Request $request) {
+    return GameController::getWinner($request);
+});
+
+Route::get('/safe_zone', function (Request $request){
+    return SafeZoneController::getSafeZone($request);
+});
+
+Route::post('/safe_zone', function (Request $request){
+    return SafeZoneController::createSafeZone($request);
+});
+
+
+
+

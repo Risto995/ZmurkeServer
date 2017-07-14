@@ -1,0 +1,72 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\User;
+use App\Friends;
+use Psy\Exception\ErrorException;
+use Symfony\Component\Finder\Exception\AccessDeniedException;
+
+use App\Http\Requests;
+
+class FriendsController extends Controller
+{
+    public static function getUsersFriends(Request $request){
+
+        if(!$request->hasHeader('api') || User::where('api_token', $request->header('api'))->first() == null)
+            throw new AccessDeniedException('You need to provide a valid API token');
+
+        $user = User::where('api_token', $request->header('api'))->first();
+
+        return $user->friends()->get();
+    }
+
+    public static function addFriend(Request $request){
+        if(!$request->hasHeader('api') || User::where('api_token', $request->header('api'))->first() == null)
+            throw new AccessDeniedException('You need to provide a valid API token');
+
+        $user = User::where('api_token', $request->header('api'))->first();
+
+        $friends = new Friends();
+        $friends->first_user = $user->id;
+        $friends->second_user = $request->get('friend_id');
+        $friends->save();
+
+        $reverseFriends = new Friends();
+        $reverseFriends->first_user = $request->get('friend_id');
+        $reverseFriends->second_user = $user->id;
+        $reverseFriends->save();
+
+        return $friends;
+    }
+
+    public static function getAllFriendsWithinRadius(Request $request, $radius){
+        if(!$request->hasHeader('api') || User::where('api_token', $request->header('api'))->first() == null)
+            throw new AccessDeniedException('You need to provide a valid API token');
+
+        $user = User::where('api_token', $request->header('api'))->first();
+        $usersLocation = LocationController::getCurrentLocation($request, $user->id);
+        $friends = $user->friends()->get();
+        if($friends == null)
+            throw new ErrorException('This user has no friends :(');
+
+        $friendsWithinRadius = [];
+
+
+        foreach ($friends as $friend){
+            $location = LocationController::getCurrentLocation($request, $friend->id);
+            //$location = Location::where('user_id', $friend->id)->where('active',true)->first();
+            //http://janmatuschek.de/LatitudeLongitudeBoundingCoordinates
+            //acos(sin(1.3963) * sin(Lat) + cos(1.3963) * cos(Lat) * cos(Lon - (-0.6981))) * 6371 <= 1000;
+            if($location != null && acos(sin($usersLocation->latitude) * sin($location->latitude) + cos($usersLocation->latitude) * cos($location->latitude) * cos($location->longitude - $usersLocation->longitude)) * 6371 <= $radius && $friend->game == $user->game)
+                array_push($friendsWithinRadius, $friend);
+            if($location != null && acos(sin($usersLocation->latitude) * sin($location->latitude) + cos($usersLocation->latitude) * cos($location->latitude) * cos($location->longitude - $usersLocation->longitude)) * 6371 == $radius && $user->hunter && $friend->game == $user->game) {
+                $user->points += 100;
+                $user->save();
+            }
+        }
+
+        return $friendsWithinRadius;
+    }
+}
