@@ -61,9 +61,14 @@ class FriendsController extends Controller
             //acos(sin(1.3963) * sin(Lat) + cos(1.3963) * cos(Lat) * cos(Lon - (-0.6981))) * 6371 <= 1000;
             if($location != null && acos(sin($usersLocation->latitude) * sin($location->latitude) + cos($usersLocation->latitude) * cos($location->latitude) * cos($location->longitude - $usersLocation->longitude)) * 6371 <= $radius && $friend->game == $user->game)
                 array_push($friendsWithinRadius, $friend);
-            if($location != null && acos(sin($usersLocation->latitude) * sin($location->latitude) + cos($usersLocation->latitude) * cos($location->latitude) * cos($location->longitude - $usersLocation->longitude)) * 6371 == $radius && $user->hunter && $friend->game == $user->game) {
-                $user->points += 100;
-                $user->save();
+            if($location != null && acos(sin($usersLocation->latitude) * sin($location->latitude) + cos($usersLocation->latitude) * cos($location->latitude) * cos($location->longitude - $usersLocation->longitude)) * 6371 == 0 && $user->hunter && $friend->game == $user->game) {
+                $fr = User::where('id', $friend->id)->first();
+                if(!$fr->caught) {
+                    $user->points += 10;
+                    $fr->caught = true;
+                    $fr->save();
+                    $user->save();
+                }
             }
         }
 

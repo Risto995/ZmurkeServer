@@ -25,7 +25,9 @@ class CreateUsersTable extends Migration
             $table->integer('current_game')->unsigned()->nullable();
             $table->integer('safe_zone')->unsigned()->nullable();
             $table->boolean('in_safe_zone')->default(false);
+            $table->boolean('been_in_safe_zone')->default(false);
             $table->boolean('hunter')->default(false);
+            $table->boolean('caught')->default(false);
             $table->integer('points')->default(0);
             $table->integer('timer')->default(0);
             $table->rememberToken();

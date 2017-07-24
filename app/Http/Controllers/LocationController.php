@@ -73,10 +73,11 @@ class LocationController extends Controller
                 else {
                     $user->timer--;
                     if ($user->timer <= 0)
-                        $user->points -= 100;
+                        $user->points -= 10;
                 }
 
                 $user->in_safe_zone = true;
+                $user->been_in_safe_zone = true;
             }
             else {
                 $user->in_safe_zone = false;

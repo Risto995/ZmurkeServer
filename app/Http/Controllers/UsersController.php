@@ -27,6 +27,8 @@ class UsersController extends Controller
             // Authentication passed...
             $user = Auth::user();
             return $user['api_token'];
+        } else {
+            throw new AccessDeniedException('Email or password is incorrect');
         }
     }
 

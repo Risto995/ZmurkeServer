@@ -74,14 +74,29 @@ class GameController extends Controller
         $game = Game::where('id', $user->current_game)->first();
         $players = User::where('current_game', $game->id)->get();
 
+        $pl = null;
+
+        foreach ($players as $player){
+            $pl = User::where('id', $player->id)->first();
+            if(!$pl->caught && !$pl->hunter) { //not caught and not a hunter
+                $pl->points += 50;
+                if(!$pl->been_in_safe_zone)
+                    $pl->points += 20; //bonus for not entering safe zone at all during the game
+                $pl->save();
+            }
+        }
+
         $maxPoints = User::where('current_game', $game->id)->max('points');
         $winner = User::where('current_game', $game->id)->where('points', $maxPoints)->first();
         $game->winner = $winner->id;
         $game->save();
 
+
         foreach ($players as $player){
             $pl = User::where('id', $player->id)->first();
             $pl->points = 0;
+            $pl->caught = false;
+            $pl->been_in_safe_zone = false;
             $pl->save();
         }
 
