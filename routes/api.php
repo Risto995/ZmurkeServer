@@ -47,7 +47,7 @@ Route::post('/user/friends', function (Request $request) {
 });
 
 Route::get('/user/friends_within_radius', function (Request $request) {
-    return FriendsController::getAllFriendsWithinRadius($request, 30);
+    return FriendsController::getAllFriendsWithinRadius($request, 300);
 });
 
 Route::get('/user/{id}/location', function (Request $request, $id) {

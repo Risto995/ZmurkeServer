@@ -20,7 +20,9 @@ class SafeZoneController extends Controller
 
         $user = User::where('api_token', $request->header('api'))->first();
 
-        return $user->safeZone()->with('startLocation')->with('endLocation')->get();
+        $safeZone = SafeZone::where('user_id', $user->id)->first();
+
+        return $safeZone;
     }
 
     public static function createSafeZone(Request $request)

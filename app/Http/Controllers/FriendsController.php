@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\User;
 use App\Friends;
+use App\Location;
 use Psy\Exception\ErrorException;
 use Symfony\Component\Finder\Exception\AccessDeniedException;
 
@@ -19,7 +20,9 @@ class FriendsController extends Controller
 
         $user = User::where('api_token', $request->header('api'))->first();
 
-        return $user->friends()->get();
+        $friends = Friends::where('first_user', $user->id)->orWhere('second_user', $user->id)->get();
+
+        return $friends;
     }
 
     public static function addFriend(Request $request){
@@ -33,10 +36,10 @@ class FriendsController extends Controller
         $friends->second_user = $request->get('friend_id');
         $friends->save();
 
-        $reverseFriends = new Friends();
+        /*$reverseFriends = new Friends();
         $reverseFriends->first_user = $request->get('friend_id');
         $reverseFriends->second_user = $user->id;
-        $reverseFriends->save();
+        $reverseFriends->save();*/
 
         return $friends;
     }
@@ -47,7 +50,17 @@ class FriendsController extends Controller
 
         $user = User::where('api_token', $request->header('api'))->first();
         $usersLocation = LocationController::getCurrentLocation($request, $user->id);
-        $friends = $user->friends()->get();
+        $friendsRelationship = Friends::where('first_user', $user->id)->orWhere('second_user', $user->id)->get();
+        $friends = [];
+        foreach ($friendsRelationship as $frR){
+            $id = null;
+            if($frR->first_user == $user->id)
+                $id = $frR->second_user;
+            else
+                $id = $frR->first_user;
+            $f = User::where('id', $id)->first();
+            array_push($friends, $f);
+        }
         if($friends == null)
             throw new ErrorException('This user has no friends :(');
 
@@ -55,7 +68,7 @@ class FriendsController extends Controller
 
 
         foreach ($friends as $friend){
-            $location = LocationController::getCurrentLocation($request, $friend->id);
+            $location = Location::where('user_id', $friend->id)->where('active', true)->first();
             //$location = Location::where('user_id', $friend->id)->where('active',true)->first();
             //http://janmatuschek.de/LatitudeLongitudeBoundingCoordinates
             //acos(sin(1.3963) * sin(Lat) + cos(1.3963) * cos(Lat) * cos(Lon - (-0.6981))) * 6371 <= 1000;
@@ -70,6 +83,7 @@ class FriendsController extends Controller
                     $user->save();
                 }
             }
+
         }
 
         return $friendsWithinRadius;

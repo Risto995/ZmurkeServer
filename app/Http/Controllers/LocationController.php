@@ -22,7 +22,9 @@ class LocationController extends Controller
 
         $user = User::where('id', $id)->first();
 
-        return $user->location;
+        $location = Location::where('user_id', $user->id)->where('active', true)->first();
+
+        return $location;
     }
 
     public static function getLocations(Request $request, $id){
@@ -30,7 +32,11 @@ class LocationController extends Controller
         if(!$request->hasHeader('api') || User::where('api_token', $request->header('api'))->first() == null)
             throw new AccessDeniedException('You need to provide a valid API token');
 
-        return User::find($id)->locations()->get();
+        $user = User::where('id', $id)->first();
+
+        $locations = Location::where('user_id', $user->id)->get();
+
+        return $locations;
     }
 
     public static function postCurrentLocation(Request $request){

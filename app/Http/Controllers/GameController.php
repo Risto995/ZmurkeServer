@@ -19,7 +19,9 @@ class GameController extends Controller
 
         $user = User::where('api_token', $request->header('api'))->first();
 
-        return $user->game()->get();
+        $game = Game::where('id', $user->current_game)->first();
+
+        return $game;
     }
 
     public static function getPlayersInCurrentGame(Request $request){
@@ -27,8 +29,9 @@ class GameController extends Controller
             throw new AccessDeniedException('You need to provide a valid API token');
 
         $user = User::where('api_token', $request->header('api'))->first();
-        $game = $user->game()->first();
-        return Game::find($game['id'])->players()->get();
+        $game = Game::where('id', $user->current_game)->first();
+        $players = User::where('current_game', $game->id)->get();
+        return $players;
     }
 
     public static function createNewGame(Request $request){
