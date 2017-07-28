@@ -49,14 +49,18 @@ class UsersController extends Controller
 
         $user = User::where('api_token', $request->header('api'))->first();
 
-        if($request->has('date_of_birth'))
-            $user->date_of_birth = $request->get('date_of_birth');
+        if($request->has('phone_number'))
+            $user->date_of_birth = $request->get('phone_number');
         if($request->has('avatar'))
             $user->avatar = $request->get('avatar');
-        if($request->has('new_password') && $request->has('confirm_password') && $request->get('new_password') == $request->get('confirm_password'))
+        if($request->has('first_name'))
+            $user->first_name = $request->get('first_name');
+        if($request->has('last_name'))
+            $user->last_name = $request->get('last_name');
+
+        if($request->has('new_password'))
             $user->password = bcrypt($request->get('new_password'));
-        else
-            throw new ErrorException('Passwords do not match');
+
 
         $user->save();
 
@@ -74,5 +78,12 @@ class UsersController extends Controller
         $api_token = $request->header('api');
         return User::where('api_token', $api_token)->first();
 
+    }
+
+    public static function getOtherUser(Request $request, $id){
+        if(!$request->hasHeader('api') || User::where('api_token', $request->header('api'))->first() == null)
+            throw new AccessDeniedException('You need to provide a valid API token');
+
+        return User::where('id', $id)->first();
     }
 }
