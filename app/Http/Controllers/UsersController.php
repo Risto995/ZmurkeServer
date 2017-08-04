@@ -50,7 +50,7 @@ class UsersController extends Controller
         $user = User::where('api_token', $request->header('api'))->first();
 
         if($request->has('phone_number'))
-            $user->date_of_birth = $request->get('phone_number');
+            $user->phone_number = $request->get('phone_number');
         if($request->has('avatar'))
             $user->avatar = $request->get('avatar');
         if($request->has('first_name'))
