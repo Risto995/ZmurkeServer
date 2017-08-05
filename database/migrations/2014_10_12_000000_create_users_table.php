@@ -22,7 +22,7 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->string('phone_number')->nullable();
             $table->string('api_token', 60)->unique();
-            $table->string('avatar')->default('default.jpg');
+            $table->longText('avatar')->nullable();
             $table->integer('current_location')->unsigned()->nullable();
             $table->integer('current_game')->unsigned()->nullable();
             $table->integer('safe_zone')->unsigned()->nullable();
