@@ -20,7 +20,20 @@ class FriendsController extends Controller
 
         $user = User::where('api_token', $request->header('api'))->first();
 
-        $friends = Friends::where('first_user', $user->id)->orWhere('second_user', $user->id)->get();
+        $friendsRelationship = Friends::where('first_user', $user->id)->orWhere('second_user', $user->id)->get();
+
+        $friends = [];
+        foreach ($friendsRelationship as $frR){
+            $id = null;
+            if($frR->first_user == $user->id)
+                $id = $frR->second_user;
+            else
+                $id = $frR->first_user;
+            $f = User::where('id', $id)->first();
+            array_push($friends, $f);
+        }
+        if($friends == null)
+            throw new ErrorException('This user has no friends :(');
 
         return $friends;
     }
