@@ -57,6 +57,29 @@ class FriendsController extends Controller
         return $friends;
     }
 
+    public static function getFriendsLocations(Request $request){
+        $friends = self::getUsersFriends($request);
+        $list = [];
+        foreach ($friends as $friend){
+            $info = self::getFriendWithLocation($friend->id);
+            $value = json_decode($info->content());
+            array_push($list, $value);
+        }
+
+        return $list;
+    }
+
+    public static function getFriendWithLocation($id){
+        $user = User::where('id', $id)->first();
+        $location = Location::where('user_id', $id)->where('active', true)->first();
+        return response()->json([
+            'name' => $user->name,
+            'avatar' => $user->avatar,
+            'latitude' => $location->latitude,
+            'longitude' => $location->longitude
+        ]);
+    }
+
     public static function getAllFriendsWithinRadius(Request $request, $radius){
         if(!$request->hasHeader('api') || User::where('api_token', $request->header('api'))->first() == null)
             throw new AccessDeniedException('You need to provide a valid API token');

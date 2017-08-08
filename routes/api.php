@@ -18,6 +18,14 @@ use App\Http\Controllers\FriendsController;
 |
 */
 
+Route::get('/user/friends_location', function (Request $request) {
+    return FriendsController::getFriendsLocations($request);
+});
+
+Route::get('/user/friends_location/{id}', function (Request $request, $id) {
+    return FriendsController::getFriendWithLocation($id);
+});
+
 Route::get('/user/friends', function (Request $request) {
     return FriendsController::getUsersFriends($request);
 });
