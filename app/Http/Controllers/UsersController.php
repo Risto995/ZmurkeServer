@@ -59,7 +59,7 @@ class UsersController extends Controller
             $user->last_name = $request->get('last_name');
 
         if($request->has('new_password')){
-            if(bcrypt($request->get('old_password')) == $user->password){
+            if(Auth::attempt(['email' => $request->get('email'), 'old_password' => $request->get('password')])){
                 $user->password = bcrypt($request->get('new_password'));
             } else {
                 throw new ErrorException("The password provided does not match an existing password for this user");
