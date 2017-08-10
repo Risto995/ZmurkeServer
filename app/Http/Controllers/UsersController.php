@@ -58,8 +58,14 @@ class UsersController extends Controller
         if($request->has('last_name'))
             $user->last_name = $request->get('last_name');
 
-        if($request->has('new_password'))
-            $user->password = bcrypt($request->get('new_password'));
+        if($request->has('new_password')){
+            if(bcrypt($request->get('old_password')) == $user->password){
+                $user->password = bcrypt($request->get('new_password'));
+            } else {
+                throw new ErrorException("The password provided does not match an existing password for this user");
+            }
+        }
+
 
 
         $user->save();
