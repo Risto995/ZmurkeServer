@@ -18,6 +18,7 @@ use Psy\Exception\ErrorException;
 use Symfony\Component\Finder\Exception\AccessDeniedException;
 use Symfony\Component\Routing\Exception\MissingMandatoryParametersException;
 use Auth;
+use Illuminate\Support\Facades\Input;
 
 class UsersController extends Controller
 {
@@ -49,10 +50,15 @@ class UsersController extends Controller
 
         $user = User::where('api_token', $request->header('api'))->first();
 
+        /*return $request->all();*/
+
         if($request->has('phone_number'))
             $user->phone_number = $request->get('phone_number');
-        if($request->has('avatar'))
-            $user->avatar = $request->get('avatar');
+        if($request->file('avatar')){
+            $file = $request->file('avatar');
+            $file->move(public_path().'/images/',$user->id.'.jpg');
+            $user->avatar = '/images/'.$user->id.'.jpg';
+        }
         if($request->has('first_name'))
             $user->first_name = $request->get('first_name');
         if($request->has('last_name'))
