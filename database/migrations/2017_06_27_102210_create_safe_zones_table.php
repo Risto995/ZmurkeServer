@@ -15,11 +15,9 @@ class CreateSafeZonesTable extends Migration
     {
         Schema::create('safe_zones', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('start_location')->unsigned();
-            $table->integer('end_location')->unsigned();
+            $table->double('latitude')->unsigned();
+            $table->double('longitude')->unsigned();
             $table->integer('user_id')->unsigned();
-            $table->foreign('start_location')->references('id')->on('locations')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreign('end_location')->references('id')->on('locations')->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();
         });

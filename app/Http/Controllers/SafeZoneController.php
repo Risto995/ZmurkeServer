@@ -35,23 +35,9 @@ class SafeZoneController extends Controller
             throw new ErrorException('This user already has a safe zone');
 
         $safeZone = new SafeZone();
-        $startLocation = new Location();
-        $endLocation = new Location();
 
-        $startLocation->latitude = $request->get('start_latitude');
-        $startLocation->longitude = $request->get('start_longitude');
-        $startLocation->user_id = $user->id;
-        $startLocation->active = false;
-        $startLocation->save();
-
-        $endLocation->latitude = $request->get('end_latitude');
-        $endLocation->longitude = $request->get('end_longitude');
-        $endLocation->user_id = $user->id;
-        $endLocation->active = false;
-        $endLocation->save();
-
-        $safeZone->start_location = $startLocation->id;
-        $safeZone->end_location = $endLocation->id;
+        $safeZone->latitude = $request->get('latitude');
+        $safeZone->longitude = $request->get('longitude');
         $safeZone->user_id = $user->id;
         $safeZone->save();
 

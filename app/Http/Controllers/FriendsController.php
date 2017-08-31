@@ -62,8 +62,10 @@ class FriendsController extends Controller
         $list = [];
         foreach ($friends as $friend){
             $info = self::getFriendWithLocation($friend->id);
-            $value = json_decode($info->content());
-            array_push($list, $value);
+            if($info != null){
+                $value = json_decode($info->content());
+                array_push($list, $value);
+            }
         }
 
         return $list;
@@ -72,12 +74,17 @@ class FriendsController extends Controller
     public static function getFriendWithLocation($id){
         $user = User::where('id', $id)->first();
         $location = Location::where('user_id', $id)->where('active', true)->first();
-        return response()->json([
-            'name' => $user->name,
-            'avatar' => $user->avatar,
-            'latitude' => $location->latitude,
-            'longitude' => $location->longitude
-        ]);
+        if($location != null){
+            return response()->json([
+                'name' => $user->name,
+                'avatar' => $user->avatar,
+                'latitude' => $location->latitude,
+                'longitude' => $location->longitude
+            ]);
+        } else {
+            return null;
+        }
+
     }
 
     public static function getAllFriendsWithinRadius(Request $request, $radius){
