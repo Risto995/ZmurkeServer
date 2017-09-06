@@ -34,8 +34,16 @@ Route::post('/user/friends', function (Request $request) {
     return FriendsController::addFriend($request);
 });
 
+Route::post('/user/friends/remove', function (Request $request) {
+    return FriendsController::removeFriend($request);
+});
+
 Route::get('/user/friends_within_radius', function (Request $request) {
     return FriendsController::getAllFriendsWithinRadius($request, 300);
+});
+
+Route::get('/user/friends_safe_zones', function (Request $request) {
+    return FriendsController::getFriendsSafeZones($request);
 });
 
 Route::post('/login', function (Request $request) {
@@ -58,8 +66,20 @@ Route::get('/user', function (Request $request) {
     return UsersController::getUser($request);
 });
 
+Route::get('/user/active', function(Request $request){
+    return UsersController::toggleActive($request);
+});
+
 Route::get('/user/{id}', function (Request $request, $id) {
     return UsersController::getOtherUser($request, $id);
+});
+
+Route::post('/user/points/add', function (Request $request) {
+    return UsersController::addPoints($request);
+});
+
+Route::post('/user/points/subtract', function (Request $request) {
+    return UsersController::subtractPoints($request);
 });
 
 Route::get('/user/{id}/location', function (Request $request, $id) {
@@ -101,7 +121,5 @@ Route::get('/safe_zone', function (Request $request){
 Route::post('/safe_zone', function (Request $request){
     return SafeZoneController::createSafeZone($request);
 });
-
-
 
 

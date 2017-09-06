@@ -22,12 +22,14 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->string('phone_number')->nullable();
             $table->string('api_token', 60)->unique();
+            $table->string('color');
             $table->longText('avatar')->nullable();
             $table->integer('current_location')->unsigned()->nullable();
             $table->integer('current_game')->unsigned()->nullable();
             $table->integer('safe_zone')->unsigned()->nullable();
             $table->boolean('in_safe_zone')->default(false);
             $table->boolean('been_in_safe_zone')->default(false);
+            $table->boolean('active')->default(false);
             $table->boolean('hunter')->default(false);
             $table->boolean('caught')->default(false);
             $table->integer('points')->default(0);

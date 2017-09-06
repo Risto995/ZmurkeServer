@@ -13,7 +13,8 @@ use App\Http\Requests;
 
 class FriendsController extends Controller
 {
-    public static function getUsersFriends(Request $request){
+    public static function getUsersFriends(Request $request)
+    {
 
         if(!$request->hasHeader('api') || User::where('api_token', $request->header('api'))->first() == null)
             throw new AccessDeniedException('You need to provide a valid API token');
@@ -38,7 +39,8 @@ class FriendsController extends Controller
         return $friends;
     }
 
-    public static function addFriend(Request $request){
+    public static function addFriend(Request $request)
+    {
         if(!$request->hasHeader('api') || User::where('api_token', $request->header('api'))->first() == null)
             throw new AccessDeniedException('You need to provide a valid API token');
 
@@ -57,7 +59,45 @@ class FriendsController extends Controller
         return $friends;
     }
 
-    public static function getFriendsLocations(Request $request){
+    public static function removeFriend(Request $request)
+    {
+        if(!$request->hasHeader('api') || User::where('api_token', $request->header('api'))->first() == null)
+            throw new AccessDeniedException('You need to provide a valid API token');
+
+        $user = User::where('api_token', $request->header('api'))->first();
+
+        $friends = Friends::where('first_user', $user->id)->where('second_user', $request->get('friend_id'))->first();
+        $friends->delete();
+
+        return [];
+    }
+
+    public static function getFriendsSafeZones(Request $request)
+    {
+        if(!$request->hasHeader('api') || User::where('api_token', $request->header('api'))->first() == null)
+            throw new AccessDeniedException('You need to provide a valid API token');
+
+        $user = User::where('api_token', $request->header('api'))->first();
+
+        $friends = self::getUsersFriends($request);
+        $list = [];
+
+        $safeZone = SafeZoneController::getSafeZone($request);
+        $safeZone->color = $user->color;
+        array_push($list, $safeZone);
+        foreach ($friends as $friend){
+            $safeZone = SafeZoneController::getAnySafeZone($friend->id);
+            if($safeZone != null){
+                $safeZone->color = $friend->color;
+                array_push($list, $safeZone);
+            }
+        }
+
+        return $list;
+    }
+
+    public static function getFriendsLocations(Request $request)
+    {
         $friends = self::getUsersFriends($request);
         $list = [];
         foreach ($friends as $friend){
@@ -71,7 +111,8 @@ class FriendsController extends Controller
         return $list;
     }
 
-    public static function getFriendWithLocation($id){
+    public static function getFriendWithLocation($id)
+    {
         $user = User::where('id', $id)->first();
         $location = Location::where('user_id', $id)->where('active', true)->first();
         if($location != null){
@@ -87,7 +128,8 @@ class FriendsController extends Controller
 
     }
 
-    public static function getAllFriendsWithinRadius(Request $request, $radius){
+    public static function getAllFriendsWithinRadius(Request $request, $radius)
+    {
         if(!$request->hasHeader('api') || User::where('api_token', $request->header('api'))->first() == null)
             throw new AccessDeniedException('You need to provide a valid API token');
 

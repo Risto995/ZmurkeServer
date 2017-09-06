@@ -16,14 +16,17 @@ use App\Location;
 use App\SafeZone;
 use Psy\Exception\ErrorException;
 use Symfony\Component\Finder\Exception\AccessDeniedException;
+use Symfony\Component\Routing\Exception\InvalidParameterException;
 use Symfony\Component\Routing\Exception\MissingMandatoryParametersException;
 use Auth;
 use Illuminate\Support\Facades\Input;
+use Faker\Factory as Faker;
 
 class UsersController extends Controller
 {
 
-    public static function login(Request $request){
+    public static function login(Request $request)
+    {
         if (Auth::attempt(['email' => $request->get('email'), 'password' => $request->get('password')])) {
             // Authentication passed...
             $user = Auth::user();
@@ -33,7 +36,10 @@ class UsersController extends Controller
         }
     }
 
-    public static function register(Request $request){
+    public static function register(Request $request)
+    {
+
+        $faker = Faker::create();
 
         return User::create([
             'name' => $request->get('name'),
@@ -41,10 +47,24 @@ class UsersController extends Controller
             'api_token' => str_random(60),
             'password' => bcrypt($request->get('password')),
             'avatar' => 'default.jpg',
+            'color' => $faker->hexColor(),
         ]);
     }
 
-    public static function update(Request $request){
+    public static function toggleActive(Request $request)
+    {
+        if(!$request->hasHeader('api') || User::where('api_token', $request->header('api'))->first() == null)
+            throw new AccessDeniedException('You need to provide a valid API token');
+
+        $user = User::where('api_token', $request->header('api'))->first();
+        $user->active = !$user->active;
+        $user->save();
+
+        return $user;
+    }
+
+    public static function update(Request $request)
+    {
         if(!$request->hasHeader('api') || User::where('api_token', $request->header('api'))->first() == null)
             throw new AccessDeniedException('You need to provide a valid API token');
 
@@ -71,19 +91,18 @@ class UsersController extends Controller
                 throw new ErrorException("The password provided does not match an existing password for this user");
             }
         }
-
-
-
         $user->save();
 
         return $user;
     }
 
-    public static function getAllUsers(Request $request){
+    public static function getAllUsers(Request $request)
+    {
         return User::all();
     }
 
-    public static function getUser(Request $request){
+    public static function getUser(Request $request)
+    {
 
         if(!$request->hasHeader('api') || User::where('api_token', $request->header('api'))->first() == null)
             throw new AccessDeniedException('You need to provide a valid API token');
@@ -92,10 +111,48 @@ class UsersController extends Controller
 
     }
 
-    public static function getOtherUser(Request $request, $id){
+    public static function getOtherUser(Request $request, $id)
+    {
         if(!$request->hasHeader('api') || User::where('api_token', $request->header('api'))->first() == null)
             throw new AccessDeniedException('You need to provide a valid API token');
 
         return User::where('id', $id)->first();
+    }
+
+    public static function addPoints(Request $request)
+    {
+        if(!$request->hasHeader('api') || User::where('api_token', $request->header('api'))->first() == null)
+            throw new AccessDeniedException('You need to provide a valid API token');
+
+        $user = User::where('api_token', $request->header('api'))->first();
+
+        if($request->has('points')){
+            $user->points += $request->get('points');
+        } else {
+            throw new MissingMandatoryParametersException('You need to provide points');
+        }
+
+        $user->save();
+
+        return $user;
+
+    }
+
+    public static function subtractPoints(Request $request)
+    {
+        if(!$request->hasHeader('api') || User::where('api_token', $request->header('api'))->first() == null)
+            throw new AccessDeniedException('You need to provide a valid API token');
+
+        $user = User::where('api_token', $request->header('api'))->first();
+
+        if($request->has('points')){
+            $user->points -= $request->get('points');
+        } else {
+            throw new MissingMandatoryParametersException('You need to provide points');
+        }
+
+        $user->save();
+
+        return $user;
     }
 }

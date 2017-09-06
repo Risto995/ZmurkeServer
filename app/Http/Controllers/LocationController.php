@@ -65,7 +65,7 @@ class LocationController extends Controller
         $user->current_location = $location->id;
 
 
-        $safeZone = SafeZone::where('id',$user->safe_zone)->first();
+        /*$safeZone = SafeZone::where('id',$user->safe_zone)->first();
         if($safeZone != null) {
             if ($location->latitude >= floor($safeZone->latitude) &&
                 $location->longitude >= floor($safeZone->longitude) &&
@@ -87,7 +87,7 @@ class LocationController extends Controller
                 $user->in_safe_zone = false;
                 $user->timer = 0;
             }
-        }
+        }*/
 
         $user->save();
         return $location;

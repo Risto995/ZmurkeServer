@@ -26,6 +26,7 @@ class UsersTableSeeder extends Seeder
                 'points' => 0,
                 'current_location' => null,
                 'current_game' => null,
+                'color' => $faker->hexColor(),
             ]);
         }
     }
