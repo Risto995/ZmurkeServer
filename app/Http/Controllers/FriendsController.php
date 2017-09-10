@@ -84,11 +84,13 @@ class FriendsController extends Controller
 
         $safeZone = SafeZoneController::getSafeZone($request);
         $safeZone->color = $user->color;
+        $safeZone->name = $user->name;
         array_push($list, $safeZone);
         foreach ($friends as $friend){
             $safeZone = SafeZoneController::getAnySafeZone($friend->id);
             if($safeZone != null){
                 $safeZone->color = $friend->color;
+                $safeZone->name = $friend->name;
                 array_push($list, $safeZone);
             }
         }
