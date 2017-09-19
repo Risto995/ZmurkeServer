@@ -122,7 +122,9 @@ class FriendsController extends Controller
                 'name' => $user->name,
                 'avatar' => $user->avatar,
                 'latitude' => $location->latitude,
-                'longitude' => $location->longitude
+                'longitude' => $location->longitude,
+                'in_safe_zone' => $user->in_safe_zone,
+                'hunter' => $user->hunter,
             ]);
         } else {
             return null;
