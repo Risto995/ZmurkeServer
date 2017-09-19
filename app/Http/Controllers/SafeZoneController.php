@@ -53,4 +53,16 @@ class SafeZoneController extends Controller
 
         return $safeZone;
     }
+
+    public static function setInSafeZone(Request $request)
+    {
+        if(!$request->hasHeader('api') || User::where('api_token', $request->header('api'))->first() == null)
+            throw new AccessDeniedException('You need to provide a valid API token');
+        $user = User::where('api_token', $request->header('api'))->first();
+
+        $user->in_safe_zone = $request->get('in_safe_zone') == "true" ? 1 : 0;
+        $user->save();
+
+        return $user;
+    }
 }

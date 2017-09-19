@@ -63,6 +63,7 @@ class LocationController extends Controller
 
         $location->save();
         $user->current_location = $location->id;
+        $user->in_safe_zone = $request->get('in_safe_zone') == "true" ? 1 : 0;
 
 
         /*$safeZone = SafeZone::where('id',$user->safe_zone)->first();

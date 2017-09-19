@@ -82,6 +82,10 @@ Route::post('/user/points/subtract', function (Request $request) {
     return UsersController::subtractPoints($request);
 });
 
+Route::post('/user/active', function (Request $request) {
+    return UsersController::setActive($request);
+});
+
 Route::get('/user/{id}/location', function (Request $request, $id) {
     return LocationController::getCurrentLocation($request, $id);
 });
@@ -120,6 +124,10 @@ Route::get('/safe_zone', function (Request $request){
 
 Route::post('/safe_zone', function (Request $request){
     return SafeZoneController::createSafeZone($request);
+});
+
+Route::post('/safe_zone/in_safe_zone', function (Request $request){
+    return SafeZoneController::setInSafeZone($request);
 });
 
 

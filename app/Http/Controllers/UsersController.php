@@ -48,6 +48,7 @@ class UsersController extends Controller
             'password' => bcrypt($request->get('password')),
             'avatar' => 'default.jpg',
             'color' => $faker->hexColor(),
+            'hunter' => $faker->boolean($chanceOfGettingTrue = 40),
         ]);
     }
 
@@ -149,6 +150,24 @@ class UsersController extends Controller
             $user->points -= $request->get('points');
         } else {
             throw new MissingMandatoryParametersException('You need to provide points');
+        }
+
+        $user->save();
+
+        return $user;
+    }
+
+    public static function setActive(Request $request)
+    {
+        if(!$request->hasHeader('api') || User::where('api_token', $request->header('api'))->first() == null)
+            throw new AccessDeniedException('You need to provide a valid API token');
+
+        $user = User::where('api_token', $request->header('api'))->first();
+
+        if($request->has('active')){
+            $user->active -= $request->get('active');
+        } else {
+            throw new MissingMandatoryParametersException('You need to provide active value');
         }
 
         $user->save();
