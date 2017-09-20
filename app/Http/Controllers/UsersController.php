@@ -52,13 +52,25 @@ class UsersController extends Controller
         ]);
     }
 
-    public static function toggleActive(Request $request)
+    public static function setActive(Request $request)
     {
-        if(!$request->hasHeader('api') || User::where('api_token', $request->header('api'))->first() == null)
+        if (!$request->hasHeader('api') || User::where('api_token', $request->header('api'))->first() == null)
             throw new AccessDeniedException('You need to provide a valid API token');
 
         $user = User::where('api_token', $request->header('api'))->first();
-        $user->active = !$user->active;
+        $user->active = true;
+        $user->save();
+
+        return $user;
+    }
+
+    public static function setInactive(Request $request)
+    {
+        if (!$request->hasHeader('api') || User::where('api_token', $request->header('api'))->first() == null)
+            throw new AccessDeniedException('You need to provide a valid API token');
+
+        $user = User::where('api_token', $request->header('api'))->first();
+        $user->active = false;
         $user->save();
 
         return $user;
@@ -66,27 +78,27 @@ class UsersController extends Controller
 
     public static function update(Request $request)
     {
-        if(!$request->hasHeader('api') || User::where('api_token', $request->header('api'))->first() == null)
+        if (!$request->hasHeader('api') || User::where('api_token', $request->header('api'))->first() == null)
             throw new AccessDeniedException('You need to provide a valid API token');
 
         $user = User::where('api_token', $request->header('api'))->first();
 
         /*return $request->all();*/
 
-        if($request->has('phone_number'))
+        if ($request->has('phone_number'))
             $user->phone_number = $request->get('phone_number');
-        if($request->file('avatar')){
+        if ($request->file('avatar')) {
             $file = $request->file('avatar');
-            $file->move(public_path().'/images/',$user->id.'.jpg');
-            $user->avatar = '/images/'.$user->id.'.jpg';
+            $file->move(public_path() . '/images/', $user->id . '.jpg');
+            $user->avatar = '/images/' . $user->id . '.jpg';
         }
-        if($request->has('first_name'))
+        if ($request->has('first_name'))
             $user->first_name = $request->get('first_name');
-        if($request->has('last_name'))
+        if ($request->has('last_name'))
             $user->last_name = $request->get('last_name');
 
-        if($request->has('new_password')){
-            if(Auth::attempt(['email' => $request->get('email'), 'password' => $request->get('old_password')])){
+        if ($request->has('new_password')) {
+            if (Auth::attempt(['email' => $request->get('email'), 'password' => $request->get('old_password')])) {
                 $user->password = bcrypt($request->get('new_password'));
             } else {
                 throw new ErrorException("The password provided does not match an existing password for this user");
@@ -105,7 +117,7 @@ class UsersController extends Controller
     public static function getUser(Request $request)
     {
 
-        if(!$request->hasHeader('api') || User::where('api_token', $request->header('api'))->first() == null)
+        if (!$request->hasHeader('api') || User::where('api_token', $request->header('api'))->first() == null)
             throw new AccessDeniedException('You need to provide a valid API token');
         $api_token = $request->header('api');
         return User::where('api_token', $api_token)->first();
@@ -114,7 +126,7 @@ class UsersController extends Controller
 
     public static function getOtherUser(Request $request, $id)
     {
-        if(!$request->hasHeader('api') || User::where('api_token', $request->header('api'))->first() == null)
+        if (!$request->hasHeader('api') || User::where('api_token', $request->header('api'))->first() == null)
             throw new AccessDeniedException('You need to provide a valid API token');
 
         return User::where('id', $id)->first();
@@ -122,12 +134,12 @@ class UsersController extends Controller
 
     public static function addPoints(Request $request)
     {
-        if(!$request->hasHeader('api') || User::where('api_token', $request->header('api'))->first() == null)
+        if (!$request->hasHeader('api') || User::where('api_token', $request->header('api'))->first() == null)
             throw new AccessDeniedException('You need to provide a valid API token');
 
         $user = User::where('api_token', $request->header('api'))->first();
 
-        if($request->has('points')){
+        if ($request->has('points')) {
             $user->points += $request->get('points');
         } else {
             throw new MissingMandatoryParametersException('You need to provide points');
@@ -141,33 +153,15 @@ class UsersController extends Controller
 
     public static function subtractPoints(Request $request)
     {
-        if(!$request->hasHeader('api') || User::where('api_token', $request->header('api'))->first() == null)
+        if (!$request->hasHeader('api') || User::where('api_token', $request->header('api'))->first() == null)
             throw new AccessDeniedException('You need to provide a valid API token');
 
         $user = User::where('api_token', $request->header('api'))->first();
 
-        if($request->has('points')){
+        if ($request->has('points')) {
             $user->points -= $request->get('points');
         } else {
             throw new MissingMandatoryParametersException('You need to provide points');
-        }
-
-        $user->save();
-
-        return $user;
-    }
-
-    public static function setActive(Request $request)
-    {
-        if(!$request->hasHeader('api') || User::where('api_token', $request->header('api'))->first() == null)
-            throw new AccessDeniedException('You need to provide a valid API token');
-
-        $user = User::where('api_token', $request->header('api'))->first();
-
-        if($request->has('active')){
-            $user->active -= $request->get('active');
-        } else {
-            throw new MissingMandatoryParametersException('You need to provide active value');
         }
 
         $user->save();

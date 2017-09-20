@@ -66,8 +66,12 @@ Route::get('/user', function (Request $request) {
     return UsersController::getUser($request);
 });
 
-Route::get('/user/active', function(Request $request){
-    return UsersController::toggleActive($request);
+Route::post('/user/active', function(Request $request){
+    return UsersController::setActive($request);
+});
+
+Route::post('/user/inactive', function(Request $request){
+    return UsersController::setInactive($request);
 });
 
 Route::get('/user/{id}', function (Request $request, $id) {
@@ -80,10 +84,6 @@ Route::post('/user/points/add', function (Request $request) {
 
 Route::post('/user/points/subtract', function (Request $request) {
     return UsersController::subtractPoints($request);
-});
-
-Route::post('/user/active', function (Request $request) {
-    return UsersController::setActive($request);
 });
 
 Route::get('/user/{id}/location', function (Request $request, $id) {

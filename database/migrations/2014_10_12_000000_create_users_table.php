@@ -29,7 +29,7 @@ class CreateUsersTable extends Migration
             $table->integer('safe_zone')->unsigned()->nullable();
             $table->boolean('in_safe_zone')->default(false);
             $table->boolean('been_in_safe_zone')->default(false);
-            $table->boolean('active')->default(false);
+            $table->boolean('active')->default(true);
             $table->boolean('hunter')->default(false);
             $table->boolean('caught')->default(false);
             $table->integer('points')->default(0);
