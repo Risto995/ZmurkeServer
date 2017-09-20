@@ -125,6 +125,7 @@ class FriendsController extends Controller
                 'longitude' => $location->longitude,
                 'in_safe_zone' => $user->in_safe_zone,
                 'hunter' => $user->hunter,
+                'active' => $user->active,
             ]);
         } else {
             return null;
